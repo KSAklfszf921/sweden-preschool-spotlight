@@ -12,8 +12,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMapStore } from '@/stores/mapStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SearchFilters } from '@/components/SearchFilters';
-// DistanceFilter removed - component deleted
-// AdvancedSearch and TravelTimeCalculator removed - components deleted
+import { DistanceFilter } from '@/components/filters/DistanceFilter';
+import { AdvancedSearch } from '@/components/enhanced/AdvancedSearch';
+import { TravelTimeCalculator } from '@/components/enhanced/TravelTimeCalculator';
 
 const SmartSearchBar: React.FC = () => {
   const { 
@@ -600,7 +601,12 @@ const SmartSearchBar: React.FC = () => {
                 </Button>
               </div>
               
-              {/* DistanceFilter removed - component deleted */}
+              {userLocation && (
+                <DistanceFilter 
+                  userLocation={userLocation}
+                  onLocationRequest={handleGetCurrentLocation}
+                />
+              )}
             </TabsContent>
           </Tabs>
 
@@ -666,7 +672,25 @@ const SmartSearchBar: React.FC = () => {
         </div>
       </Card>
 
-      {/* Travel Times Panel and Advanced Search removed - components deleted */}
+      {/* Travel Times Panel */}
+      <AnimatePresence>
+        {showTravelTimes && userLocation && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="mt-2"
+          >
+            <TravelTimeCalculator userLocation={userLocation} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Advanced Search Modal */}
+      <AdvancedSearch
+        isOpen={showAdvancedSearch}
+        onClose={() => setShowAdvancedSearch(false)}
+      />
 
       {/* Search suggestions */}
       <AnimatePresence>

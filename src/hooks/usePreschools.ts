@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useMapStore, type Preschool } from '@/stores/mapStore';
-// useRealTimeUpdates and useBackgroundGoogleEnrichment removed - hooks deleted
+import { useRealTimeUpdates } from '@/hooks/useRealTimeUpdates';
+import { useBackgroundGoogleEnrichment } from './useBackgroundGoogleEnrichment';
 
 export const usePreschools = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { setPreschools, setLoading } = useMapStore();
-  // Background enrichment and real-time updates removed - hooks deleted
+  const { startBackgroundEnrichment } = useBackgroundGoogleEnrichment();
+  
+  // Enable real-time updates
+  useRealTimeUpdates();
 
   const fetchPreschools = async () => {
     try {
@@ -95,7 +99,8 @@ export const usePreschools = () => {
       setPreschools(transformedPreschools);
       console.log(`Loaded ${transformedPreschools.length} preschools`);
 
-      // Background enrichment removed - hook deleted
+      // Start discrete background Google data enrichment
+      startBackgroundEnrichment();
 
     } catch (err) {
       console.error('Error fetching preschools:', err);
